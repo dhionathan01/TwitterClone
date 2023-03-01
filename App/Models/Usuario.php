@@ -38,9 +38,31 @@ class Usuario extends Model{
             return $this;
     }
 
-    // Validar cadastro
+    public function validarCadastro(){
+        $valido = true;
+        if(strlen($this->__get('nome') < 3)){
+            $valido = false;
+        }
+        if(strlen($this->__get('email') < 3)){
+            $valido = false;
+        }
+        if(strlen($this->__get('senha') < 3)){
+            $valido = false;
+        }
+        return $valido;
+    }
 
-    // Recuperar usuário por e-mail
-
+    public function getUsuarioPorEmail(){
+        $sql = "SELECT 
+                    nome,
+                    email
+                FROM
+                    usuarios
+                WHERE email = :email";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':email', $this->__get('email'));
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
 ?>
