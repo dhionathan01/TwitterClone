@@ -29,6 +29,12 @@ class Route extends Bootstrap{
                 'controller' => 'AuthController',
                 'action' => 'autenticar'
             );
+            // Essa rota manipula os dados restritos que dependem do usuário autenticado 
+            $routes['timeline'] = array(
+                'route' => '/timeline',
+                'controller' => 'AppController',
+                'action' => 'timeline'
+            );
             $this->setRoutes($routes);
         }
     }
