@@ -33,7 +33,7 @@ class IndexController extends Action{
 
                 $usuario->__set('nome', $nome);
                 $usuario->__set('email', $email);
-                $usuario->__set('senha', $senha);
+                $usuario->__set('senha', md5($senha));
 
                 if($usuario->validarCadastro() AND count($usuario->getUsuarioPorEmail()) == 0){
                         $usuario->salvar();
