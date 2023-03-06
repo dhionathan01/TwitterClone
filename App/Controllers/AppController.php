@@ -7,19 +7,19 @@ use DHF\Model\Container;
 
 class AppController extends Action {
     public function timeline(){
-        session_start();
-        if(!empty($_SESSION['id']) AND !empty($_SESSION['nome'])){
+        $this->validaAutenticacao();
+        // recuperação de tweet
+        $tweet = Container::getModel('tweet');
+        $tweet->__set('id_usuario', $_SESSION['id']);
+        $tweets = $tweet->getAll();
 
-            $this->render('timeline');
-        }else{
-            header('Location: /?login=erro');
-        }
+        $this->view->tweets = $tweets;
+
+        $this->render('timeline');
     }
 
     public function tweet(){
-
-        session_start();
-        if(!empty($_SESSION['id']) AND !empty($_SESSION['nome'])){
+            $this->validaAutenticacao();
             $tweet = Container::getModel('Tweet');
 
             $tweet->__set('tweet', $_POST['tweet']);
@@ -28,10 +28,13 @@ class AppController extends Action {
             $tweet->salvar();
 
             header('Location: /timeline');
-
-        }else{
+    }
+    public function validaAutenticacao(){
+        session_start();
+        if(empty($_SESSION['id']) OR !isset($_SESSION['id']) OR  empty($_SESSION['nome']) OR !isset($_SESSION['nome'])){
             header('Location: /?login=erro');
         }
+
     }
 }
 
