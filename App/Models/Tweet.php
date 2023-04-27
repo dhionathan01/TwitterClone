@@ -73,6 +73,30 @@ class Tweet extends Model{
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+    public function getTotalRegistros(){
+        $sql = "SELECT 
+                  count(*) as total
+                FROM 
+                    tweets as t
+                    LEFT JOIN 
+                        usuarios as u
+                    ON (t.id_usuario = u.id)
+                WHERE
+                    id_usuario = :id_usuario
+                    or t.id_usuario in
+                    (
+                        SELECT
+                            id_usuario_seguindo
+                        FROM 
+                            usuarios_seguidores
+                        WHERE id_usuario = :id_usuario
+                    )";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id_usuario', $this->__get('id_usuario'));
+        $stmt->execute();
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
 
     public function getALL(){
         $sql = "SELECT 

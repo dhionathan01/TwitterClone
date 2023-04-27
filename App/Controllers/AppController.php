@@ -14,19 +14,25 @@ class AppController extends Action {
         
         // Limitando registros:
         $total_registros_pagina = 3;
-        $deslocamento = 0;
-        $pagina = 1;
-
+        $pagina = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
+        $deslocamento = ($pagina - 1) * $total_registros_pagina;
+/* 
         $total_registros_pagina = 3;
         $deslocamento = 3;
         $pagina = 2;
 
         $total_registros_pagina = 3;
         $deslocamento = 6;
-        $pagina = 3;
+        $pagina = 3; */
         
         echo "<BR><BR><BR> Página: $pagina | Total de registros por página: $total_registros_pagina | Deslocamento: $deslocamento";
         $tweets = $tweet->getPorPagina($total_registros_pagina, $deslocamento);
+        $total_registros = $tweet->getTotalRegistros();
+        exibirArray($total_registros);
+        $total_de_paginas = ceil($total_registros['total'] / $total_registros_pagina);
+        echo "<br> Total Paginas: $total_de_paginas";
+        $this->view->total_de_paginas = $total_de_paginas;
+        $this->view->pagina_ativa = $pagina;
         $this->view->tweets = $tweets;
 
         $usuario = Container::getModel('Usuario');
