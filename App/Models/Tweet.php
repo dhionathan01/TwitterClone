@@ -39,6 +39,41 @@ class Tweet extends Model{
 
     // recuperar
 
+    public function getPorPagina($limite, $offset){
+        $sql = "SELECT 
+                   t.id,
+                   t.id_usuario,
+                   u.nome,
+                   t.tweet,
+                   DATE_FORMAT(t.data, '%d/%m/%Y %H:%i') as data
+                FROM 
+                    tweets as t
+                    LEFT JOIN 
+                        usuarios as u
+                    ON (t.id_usuario = u.id)
+                WHERE
+                    id_usuario = :id_usuario
+                    or t.id_usuario in
+                    (
+                        SELECT
+                            id_usuario_seguindo
+                        FROM 
+                            usuarios_seguidores
+                        WHERE id_usuario = :id_usuario
+                    )
+                ORDER BY 
+                    t.data desc
+                limit 
+                    $limite
+                offset 
+                    $offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id_usuario', $this->__get('id_usuario'));
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function getALL(){
         $sql = "SELECT 
                    t.id,
